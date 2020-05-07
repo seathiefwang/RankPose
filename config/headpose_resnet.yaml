@@ -1,0 +1,27 @@
+# coding:utf-8
+Net:
+  net_type: 'RestNet'
+  n_class: 3
+Data:
+  train_dir: "../data"
+  val_dir: "../data"
+  train_name: '300w_lp_for_rank.txt'
+  val_name: 'aflw2000_filename.txt'
+  train_type: 'RANK_300W'
+  val_type: 'AFLW2000'
+  target_size: 224
+Train:
+  max_epoch: 80
+  batch_size: 16
+  num_workers: 4
+  test_every: 5
+  resume: False
+  pretrained_path:
+  use_bined: False
+  use_rank: True
+Loss:
+  loss_type: 'RANK'
+Optimizer:
+  mode: 'adam'
+  base_lr: 0.0001
+  t_max: 10
