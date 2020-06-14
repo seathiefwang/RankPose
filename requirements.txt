@@ -1,0 +1,12 @@
+albumentations
+torchvision
+matplotlib
+argparse
+sklearn
+pillow
+logger
+torch
+numpy
+scipy
+tqdm
+yaml
