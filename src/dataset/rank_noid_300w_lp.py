@@ -113,7 +113,8 @@ class RankNoIDDataset(Dataset):
             augmented = self.affine_augmenter(image=img2)
             img2 = augmented['image']
 
-        label = abs(lbl1) > abs(lbl2)
+        # label = (abs(lbl1) > abs(lbl2)) * 2 - 1
+        label = np.sign(abs(lbl1) - abs(lbl2))
 
         if self.n_class==4:
             lbl1 = euler2quat(*lbl1)

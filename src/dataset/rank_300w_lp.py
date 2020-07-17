@@ -127,7 +127,8 @@ class Rank300wDataset(Dataset):
             augmented = self.affine_augmenter(image=img2)
             img2 = augmented['image']
 
-        label = lbl1 > lbl2
+        # label = (lbl1 > lbl2) * 2 - 1
+        label = np.sign(lbl1 - lbl2)
 
         if self.n_class==4:
             lbl1 = euler2quat(*lbl1)
