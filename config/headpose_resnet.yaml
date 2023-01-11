@@ -4,8 +4,8 @@ Net:
   n_class: 3
   use_norm: True
 Data:
-  train_dir: "data"
-  val_dir: "data"
+  train_dir: "../data"
+  val_dir: "../data"
   model_save_path: "model/"
   logs_path: "logs/"
   train_name: 'data/300w_lp_for_rank.txt'

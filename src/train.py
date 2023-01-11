@@ -95,8 +95,8 @@ def main():
 
     # Dataset
     affine_augmenter = albu.Compose([albu.GaussNoise(var_limit=(0,25),p=0.05),
-                                    albu.GaussianBlur(3, p=0.05),
-                                    albu.JpegCompression(50, 100, p=0.05)])
+                                    albu.GaussianBlur(3, p=0.01),
+                                    albu.JpegCompression(50, 100, p=0.01)])
 
     image_augmenter = albu.Compose([
                                     albu.OneOf([
@@ -105,7 +105,8 @@ def main():
                                         # albu.RandomGamma(),
                                         ], p=0.2),
                                     albu.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20,p=0.05),
-                                    albu.RGBShift(p=0.05),
+                                    albu.RGBShift(p=0.01),
+                                    albu.ToGray(p=0.01)
                                     ])
     # image_augmenter = None
     train_dataset = laod_dataset(data_type=train_type, affine_augmenter=affine_augmenter, image_augmenter=image_augmenter,
