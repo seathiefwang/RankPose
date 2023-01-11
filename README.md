@@ -8,9 +8,12 @@ We address the challenging problem of RGB image-based head pose estimation. We f
 AFLW2000 and BIWI. Our model achieves significant improvements over previous SOTA
 MAE on AFLW2000 and BIWI from 4.50 [11] to 3.66 and from 4.0 [24] to 3.71 respectively. 
 
-[aflw2000 mae](https://github.com/seathiefwang/RankPose/blob/master/assets/mae_comparison_on_aflw2000.png)
-
-[biwi mae](https://github.com/seathiefwang/RankPose/blob/master/assets/mae_comparison_on_biwi.png)
+<p align="center">
+<img src="assets/mae_comparison_on_aflw2000.png" alt="drawing" width="1000"/>
+</p>
+<p align="center">
+<img src="assets/mae_comparison_on_biwi.png" alt="drawing" width="1000"/>
+</p>
 
 ## Dependencies
 
