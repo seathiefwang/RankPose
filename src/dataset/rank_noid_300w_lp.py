@@ -19,7 +19,7 @@ from utils.functional import get_pt_ypr_from_mat, euler2quat
 
 class RankNoIDDataset(Dataset):
     def __init__(self, base_dir=None, split='train', affine_augmenter=None, image_augmenter=None, 
-            target_size=224, filename=None, use_bined=False, n_class=3, debug=False):
+            target_size=224, filename=None, use_bined=False, n_class=3, debug=False, **args):
         self.base_dir = base_dir
         self.base_dir = Path(base_dir)
         self.split = split
@@ -32,7 +32,7 @@ class RankNoIDDataset(Dataset):
         self.labels = []
         self.euler_binned = []
 
-        with open(self.base_dir / filename) as f:
+        with open(filename) as f:
             for i, line in enumerate(f.readlines()):
                 ls = line.strip()
 
@@ -142,7 +142,6 @@ if __name__ == '__main__':
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    from utils.custum_aug import Rotate
 
     affine_augmenter = None
     image_augmenter = albu.Compose([albu.GaussNoise((0, 25), p=.5),

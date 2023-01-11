@@ -18,7 +18,7 @@ from utils.functional import get_pt_ypr_from_mat, euler2quat
 
 class AFLW2000Dataset(Dataset):
     def __init__(self, base_dir=None, split='train', affine_augmenter=None, image_augmenter=None, 
-            target_size=224, filename=None, use_bined=False, n_class=4, debug=False):
+            target_size=224, filename=None, use_bined=False, n_class=4, debug=False, **args):
         self.base_dir = base_dir
         self.base_dir = Path(base_dir)
         self.split = split
@@ -31,7 +31,7 @@ class AFLW2000Dataset(Dataset):
         self.labels = []
         self.euler_binned = []
 
-        with open(self.base_dir / filename) as f:
+        with open(filename) as f:
             for i, line in enumerate(f.readlines()):
                 ls = line.strip()
 

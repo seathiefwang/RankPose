@@ -11,7 +11,6 @@ class ResNet(nn.Module):
         self.use_norm = use_norm
         resnet = models.resnet50(pretrained=True)
 
-
         self.model = nn.Sequential(
                             resnet.conv1,
                             resnet.bn1,
@@ -26,14 +25,15 @@ class ResNet(nn.Module):
                             resnet.avgpool,
                             )
         
-        self.dropout = nn.Dropout(0.2)
         if self.use_norm:
             self.w = nn.Parameter(torch.Tensor(2048, n_class))
+            nn.init.kaiming_uniform_(self.w, a=math.sqrt(5))
         else:
+            self.dropout = nn.Dropout(0.2)
             self.fc_angles = nn.Linear(2048, n_class)
-        self.fc_y = nn.Linear(2048, 7) # -60, -40, -20, 20, 40, 60
-        self.fc_p = nn.Linear(2048, 7) # -60, -40, -20, 20, 40, 60
-        self.fc_r = nn.Linear(2048, 20) # -81, -72, -63, -54, -45, -36, -27, -18, -9, 0, ... 81
+            self.fc_y = nn.Linear(2048, 7) # -60, -40, -20, 20, 40, 60
+            self.fc_p = nn.Linear(2048, 7) # -60, -40, -20, 20, 40, 60
+            self.fc_r = nn.Linear(2048, 20) # -81, -72, -63, -54, -45, -36, -27, -18, -9, 0, ... 81
 
     def forward(self, x, use_bined=False):
         x = self.model(x)

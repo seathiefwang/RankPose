@@ -33,7 +33,7 @@ pip3 install requirements.txt
 
 ### Training
 ~~~
-CUDA_VISIBLE_DEVICES=0 python3 train.py ../config/headpose_resnet.yaml
+CUDA_VISIBLE_DEVICES=0 python3 src/train.py config/headpose_resnet.yaml
 ~~~
 
 ### Testing

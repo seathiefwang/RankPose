@@ -23,8 +23,7 @@ from torch.utils.data.sampler import  WeightedRandomSampler
 seed = 2020
 np.random.seed(seed)
 random.seed(seed)
-torch.random.manual_seed(seed)
-torch.cuda.manual_seed_all(seed)
+torch.manual_seed(seed) #both CPU and CUDA
 
 parser = argparse.ArgumentParser()
 parser.add_argument('config_path')
@@ -32,7 +31,7 @@ args = parser.parse_args()
 
 def main():
     config_path = Path(args.config_path)
-    config = yaml.load(open(config_path))
+    config = yaml.safe_load(open(config_path))
 
     net_config = config['Net']
     data_config = config['Data']
@@ -50,8 +49,6 @@ def main():
     pretrained_path = train_config['pretrained_path']
     use_rank = train_config['use_rank']
     use_bined = train_config['use_bined']
-    del train_config['use_rank']
-    del train_config['use_bined']
 
     train_dir = data_config['train_dir']
     val_dir = data_config['val_dir']
@@ -59,12 +56,6 @@ def main():
     val_name = data_config['val_name']
     train_type = data_config['train_type']
     val_type = data_config['val_type']
-    del data_config['train_dir']
-    del data_config['val_dir']
-    del data_config['train_name']
-    del data_config['val_name']
-    del data_config['train_type']
-    del data_config['val_type']
 
     model = load_model(**net_config)
 
@@ -72,9 +63,9 @@ def main():
     model = model.to(device)
 
     modelname = config_path.stem
-    output_dir = Path('../model') / modelname
+    output_dir = Path(data_config['model_save_path']) / modelname
     output_dir.mkdir(exist_ok=True)
-    log_dir = Path('../logs') / modelname
+    log_dir = Path(data_config['logs_path']) / modelname
     log_dir.mkdir(exist_ok=True)
 
     logger = debug_logger(log_dir)
@@ -102,20 +93,19 @@ def main():
         loss_history = []
         diff_history = []
 
-
     # Dataset
-    affine_augmenter = albu.Compose([albu.GaussNoise(var_limit=(0,25),p=.2),
-                                    albu.GaussianBlur(3, p=0.2),
-                                    albu.JpegCompression(50, 100, p=0.2)])
+    affine_augmenter = albu.Compose([albu.GaussNoise(var_limit=(0,25),p=0.05),
+                                    albu.GaussianBlur(3, p=0.05),
+                                    albu.JpegCompression(50, 100, p=0.05)])
 
     image_augmenter = albu.Compose([
                                     albu.OneOf([
                                         albu.RandomBrightnessContrast(0.25,0.25),
-                                        albu.CLAHE(clip_limit=2),
-                                        albu.RandomGamma(),
-                                        ], p=0.5),
-                                    albu.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20,p=0.2),
-                                    albu.RGBShift(p=0.2),
+                                        # albu.CLAHE(clip_limit=2),
+                                        # albu.RandomGamma(),
+                                        ], p=0.2),
+                                    albu.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20,p=0.05),
+                                    albu.RGBShift(p=0.05),
                                     ])
     # image_augmenter = None
     train_dataset = laod_dataset(data_type=train_type, affine_augmenter=affine_augmenter, image_augmenter=image_augmenter,
@@ -176,6 +166,8 @@ def main():
                 if use_rank:
                     if use_bined:
                         img1, img2, lbl1, lbl2, labels, yaw_lbl1, pitch_lbl1, roll_lbl1, yaw_lbl2, pitch_lbl2, roll_lbl2 = batched
+                        # print(lbl1, lbl2)
+                        # print( yaw_lbl1, pitch_lbl1, roll_lbl1, yaw_lbl2, pitch_lbl2, roll_lbl2)
                         img1, img2, lbl1, lbl2, labels = img1.to(device),img2.to(device),lbl1.to(device),lbl2.to(device),labels.to(device)
                         yaw_lbl1, pitch_lbl1, roll_lbl1 = yaw_lbl1.to(device), pitch_lbl1.to(device), roll_lbl1.to(device)
                         yaw_lbl2, pitch_lbl2, roll_lbl2 = yaw_lbl2.to(device), pitch_lbl2.to(device), roll_lbl2.to(device)
@@ -188,11 +180,12 @@ def main():
                         loss = loss_fn(pre_list, lbl_list, use_bined=True)
                     else:
                         img1, img2, lbl1, lbl2, labels = batched
+                        # print(lbl1, lbl2, labels)
                         img1, img2, lbl1, lbl2, labels = img1.to(device),img2.to(device),lbl1.to(device),lbl2.to(device),labels.to(device)
 
                         preds1 = model(img1, False)
                         preds2 = model(img2, False)
-                        
+                        # print(preds1)
                         loss = loss_fn([preds1,preds2], [lbl1,lbl2,labels], use_bined=False)
 
                     diff = calculate_diff(preds1, lbl1)

@@ -1,19 +1,22 @@
 # coding:utf-8
 Net:
-  net_type: 'RestNet'
+  net_type: 'ResNet'
   n_class: 3
+  use_norm: True
 Data:
-  train_dir: "../data"
-  val_dir: "../data"
-  train_name: '300w_lp_for_rank.txt'
-  val_name: 'aflw2000_filename.txt'
+  train_dir: "data"
+  val_dir: "data"
+  model_save_path: "model/"
+  logs_path: "logs/"
+  train_name: 'data/300w_lp_for_rank.txt'
+  val_name: 'data/aflw2000_filename.txt'
   train_type: 'RANK_300W'
   val_type: 'AFLW2000'
   target_size: 224
 Train:
   max_epoch: 80
-  batch_size: 16
-  num_workers: 4
+  batch_size: 64
+  num_workers: 8
   test_every: 5
   resume: False
   pretrained_path:
@@ -23,5 +26,5 @@ Loss:
   loss_type: 'RANK'
 Optimizer:
   mode: 'adam'
-  base_lr: 0.0001
+  base_lr: 0.001
   t_max: 10

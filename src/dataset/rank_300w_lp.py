@@ -18,7 +18,7 @@ from utils.functional import get_pt_ypr_from_mat, euler2quat
 
 class Rank300wDataset(Dataset):
     def __init__(self, base_dir=None, split='train', affine_augmenter=None, image_augmenter=None, 
-            target_size=224, filename=None, use_bined=False, n_class=3, debug=False):
+            target_size=224, filename=None, use_bined=False, n_class=3, debug=False, **args):
         self.base_dir = base_dir
         self.base_dir = Path(base_dir)
         self.split = split
@@ -32,9 +32,12 @@ class Rank300wDataset(Dataset):
         self.ids_index = []
         self.euler_binned = []
 
-        with open(self.base_dir / filename) as f:
+        with open(filename) as f:
             for i, line in enumerate(f.readlines()):
                 ls = line.strip()
+                print(f"loading 300w {i} file:{ls}", end='\r');
+                # if i > 100:
+                #     break
 
                 id_index = []
                 bboxs = []
@@ -66,12 +69,12 @@ class Rank300wDataset(Dataset):
                 self.ids_index.append(id_index)
                 if use_bined:
                     self.euler_binned.append(np.array(euler_binned))
-
+        print("")
 
         if 'train' in self.split:
-            self.resizer = albu.Compose([albu.RandomScale((-0.5, 0), p=0.01),
+            self.resizer = albu.Compose([#albu.RandomScale((-0.5, 0), p=0.01),
                                         albu.SmallestMaxSize(int(target_size * 1.1), p=1.),
-                                        albu.RandomScale(scale_limit=(-0.1, 0.1), p=1),
+                                        albu.RandomScale(scale_limit=(-0.1, 0.1), p=0.5),
                                         albu.PadIfNeeded(min_height=target_size, min_width=target_size, value=0, p=1),
                                         albu.RandomCrop(target_size, target_size, p=1.)])
         else:
@@ -106,7 +109,6 @@ class Rank300wDataset(Dataset):
             bined_lbl1 = bined_label[idxs[0]]
             bined_lbl2 = bined_label[idxs[1]]
 
-
         # ImageAugment (RandomBrightness, AddNoise...)
         if self.image_augmenter:
             augmented = self.image_augmenter(image=img1)
@@ -136,6 +138,7 @@ class Rank300wDataset(Dataset):
 
         if self.debug:
             print(label)
+            print(lbl1, lbl2)
             return img1, img2
         else:
             img1 = preprocess(img1)
@@ -155,8 +158,7 @@ class Rank300wDataset(Dataset):
 if __name__ == '__main__':
     import matplotlib
     matplotlib.use('Agg')
-    import matplotlib.pyplot as plt
-    from utils.custum_aug import Rotate
+    # import matplotlib.pyplot as plt
 
     affine_augmenter = None
     image_augmenter = albu.Compose([albu.GaussNoise((0, 25), p=.5),
@@ -168,8 +170,8 @@ if __name__ == '__main__':
                                     albu.CLAHE(p=0.1),
                                     albu.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=20, val_shift_limit=20,p=0.2),
                                     ])
-    dataset = Rank300wDataset(base_dir="data", affine_augmenter=affine_augmenter, image_augmenter=image_augmenter,
-                             filename='300w_lp_for_rank.txt', split='train', target_size=64, debug=True)
+    dataset = Rank300wDataset(base_dir="/mnt/data/ddg_work/face_hand/data", affine_augmenter=affine_augmenter, image_augmenter=image_augmenter,
+                             filename='../../data/300w_lp_for_rank.txt', split='train', target_size=224, debug=True)
     dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
     print(len(dataset))
 
@@ -186,5 +188,3 @@ if __name__ == '__main__':
             img.save('tmp/img2_%d_%d.jpg'%(i, j))
         if i > 2:
             break
-
-

@@ -115,7 +115,7 @@ class CosineWithRestarts(torch.optim.lr_scheduler._LRScheduler):  # pylint: disa
             self._initialized = True
             return self.base_lrs
 
-        step = self.last_epoch + 1
+        step = self.last_epoch
         self._cycle_counter = step - self._last_restart
 
         lrs = [
