@@ -30,24 +30,37 @@ pip3 install requirements.txt
 ### Train data
 [Face Alignment Across Large Poses: A 3D Solution](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm)
 
-[300W-LP](https://drive.google.com/file/d/0B7OEHD3T4eCkVGs0TkhUWFN6N1k/view?usp=sharing)
+[300W-LP](https://drive.google.com/file/d/0B7OEHD3T4eCkVGs0TkhUWFN6N1k/view?usp=sharing) : The synthesized large-pose face images from 300W.
 
 ### Test data
-[AFLW2000](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/Database/AFLW2000-3D.zip)
-[BIWI Kinect](https://data.vision.ee.ethz.ch/cvl/gfanelli/head_pose/head_forest.html)
+[AFLW2000](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/Database/AFLW2000-3D.zip) :The fitted 3D faces of the first 2000 AFLW samples, which can be used for 3D face alignment evaluation.
+
+[BIWI Kinect](https://data.vision.ee.ethz.ch/cvl/gfanelli/head_pose/head_forest.html) :The dataset contains over 15K images of 20 people
 
 ## Train and test
 
+### Code
+```
+git clone https://github.com/seathiefwang/RankPose.git
+cd RankPose
+```
+
 ### Training
-~~~
+```
 CUDA_VISIBLE_DEVICES=0 python3 src/train.py config/headpose_resnet.yaml
-~~~
+```
 
 ### Testing
-~~~
-CUDA_VISIBLE_DEVICES=0 python3 test.py
-~~~
+```
+CUDA_VISIBLE_DEVICES=0 python3 src/test.py
+```
 
-### Pretrained model
-Will be available for download in the future.
-
+### Citation
+```
+@InProceedings{Donggen_2020_BMVC_Workshops,
+  author = {Donggen Dai, Wangkit Wong, Zhuojun Chen},
+  title = {RankPose: Learning Generalised Feature with Rank Supervision for Head Pose Estimation},
+  month = {September},
+  year = {2020}
+}
+```
